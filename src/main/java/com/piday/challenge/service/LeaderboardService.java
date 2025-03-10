@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +36,16 @@ public class LeaderboardService {
             teams = teams.subList(0, limit);
         }
 
-        List<LeaderboardEntryDTO> leaderboardEntries = teams.stream()
-                .map(team -> LeaderboardEntryDTO.builder()
-                        .rank(teams.indexOf(team) + 1)
-                        .teamName(team.getTeamName())
-                        .totalScore(team.getTotalScore())
-                        .completionTime(team.getCompletionTime())
-                        .status(team.getStatus().name())
+        // Create a final copy of teams for use in the lambda
+        final List<Team> finalTeams = teams;
+
+        List<LeaderboardEntryDTO> leaderboardEntries = IntStream.range(0, finalTeams.size())
+                .mapToObj(i -> LeaderboardEntryDTO.builder()
+                        .rank(i + 1)
+                        .teamName(finalTeams.get(i).getTeamName())
+                        .totalScore(finalTeams.get(i).getTotalScore())
+                        .completionTime(finalTeams.get(i).getCompletionTime())
+                        .status(finalTeams.get(i).getStatus().name())
                         .build())
                 .collect(Collectors.toList());
 
