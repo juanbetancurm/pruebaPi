@@ -16,9 +16,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TeamProgress {
 
+    // Using team_id as primary key with @Id annotation
     @Id
+    private Long teamId;  // This field will match the column name team_id
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
+    @JoinColumn(name = "team_id", insertable = false, updatable = false)
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
